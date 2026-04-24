@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
   schedule:
     - cron: '*/30 * * * *'
   workflow_dispatch:
@@ -14,10 +11,7 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php: ['8.3']
-    name: integration-tests (PHP ${{ matrix.php }})
+    name: OCI Capacity Check
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -25,13 +19,14 @@ jobs:
       - name: Install PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: ${{ matrix.php }}
+          php-version: '8.3'
 
       - name: Install dependencies
         run: composer update --prefer-dist --no-progress
 
-      - name: Run test suite
-        run: vendor/bin/phpunit --color tests/
+      - name: Run OCI Script
+        # Ми запускаємо скрипт напряму через PHP, ігноруючи PHPUnit
+        run: php index.php
         env:
           OCI_REGION: ${{ secrets.OCI_REGION }}
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
