@@ -25,20 +25,24 @@ jobs:
         run: composer update --prefer-dist --no-progress
 
       - name: Run OCI Script
-        run: php index.php
+        run: |
+          # 1. Создаем физический файл из секрета
+          echo "${{ secrets.OCI_PRIVATE_KEY }}" > private_key.pem
+          
+          # 2. Даем ему правильные права доступа (безопасность Linux)
+          chmod 600 private_key.pem
+          
+          # 3. Запускаем скрипт
+          php index.php
         env:
-          # Основні секрети
+          # Указываем скрипту ПУТЬ к созданному файлу, а не сам текст
+          OCI_PRIVATE_KEY_FILENAME: private_key.pem
+          
+          # Остальные настройки подтягиваем из секретов
           OCI_REGION: ${{ secrets.OCI_REGION }}
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
           OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
           OCI_KEY_FINGERPRINT: ${{ secrets.OCI_KEY_FINGERPRINT }}
-          OCI_PRIVATE_KEY_FILENAME: ${{ secrets.OCI_PRIVATE_KEY }}
-          
-          # Дублюємо для сумісності (деякі версії скрипта шукають саме ці назви)
-          OCI_TENANCY: ${{ secrets.OCI_TENANCY_ID }}
-          OCI_USER: ${{ secrets.OCI_USER_ID }}
-          
-          # Налаштування інстансу
           OCI_AVAILABILITY_DOMAIN: ${{ secrets.OCI_AVAILABILITY_DOMAIN }}
           OCI_SUBNET_ID: ${{ secrets.OCI_SUBNET_ID }}
           OCI_IMAGE_ID: ${{ secrets.OCI_IMAGE_ID }}
@@ -47,7 +51,3 @@ jobs:
           OCI_SHAPE: ${{ secrets.OCI_SHAPE }}
           OCI_MAX_INSTANCES: ${{ secrets.OCI_MAX_INSTANCES }}
           OCI_SSH_PUBLIC_KEY: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
-          
-          # Повідомлення
-          TELEGRAM_USER_ID: ${{ secrets.TELEGRAM_USER_ID }}
-          TELEGRAM_BOT_API_KEY: ${{ secrets.TELEGRAM_BOT_API_KEY }}
