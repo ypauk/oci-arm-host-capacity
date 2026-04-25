@@ -26,10 +26,11 @@ jobs:
 
       - name: Run OCI Script
         run: |
-          # Перевірка чи змінні не порожні
-          if [ -z "$OCI_REGION" ]; then echo "REGION IS MISSING"; fi
-          if [ -z "$OCI_USER_ID" ]; then echo "USER_ID IS MISSING"; fi
-          if [ -z "$OCI_TENANCY_ID" ]; then echo "TENANCY_ID IS MISSING"; fi
+          echo "Checking if secrets are mapped..."
+          [ -z "$OCI_REGION" ] && echo "!!! REGION IS EMPTY !!!" || echo "Region: OK"
+          [ -z "$OCI_USER_ID" ] && echo "!!! USER_ID IS EMPTY !!!" || echo "User ID: OK"
+          [ -z "$OCI_TENANCY_ID" ] && echo "!!! TENANCY_ID IS EMPTY !!!" || echo "Tenancy ID: OK"
+          [ -z "$OCI_KEY_FINGERPRINT" ] && echo "!!! FINGERPRINT IS EMPTY !!!" || echo "Fingerprint: OK"
           
           php index.php
         env:
