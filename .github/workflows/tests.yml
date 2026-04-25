@@ -25,20 +25,20 @@ jobs:
         run: composer update --prefer-dist --no-progress
 
       - name: Run OCI Script
-        run: |
-          echo "Checking if secrets are mapped..."
-          [ -z "$OCI_REGION" ] && echo "!!! REGION IS EMPTY !!!" || echo "Region: OK"
-          [ -z "$OCI_USER_ID" ] && echo "!!! USER_ID IS EMPTY !!!" || echo "User ID: OK"
-          [ -z "$OCI_TENANCY_ID" ] && echo "!!! TENANCY_ID IS EMPTY !!!" || echo "Tenancy ID: OK"
-          [ -z "$OCI_KEY_FINGERPRINT" ] && echo "!!! FINGERPRINT IS EMPTY !!!" || echo "Fingerprint: OK"
-          
-          php index.php
+        run: php index.php
         env:
+          # Основні секрети
           OCI_REGION: ${{ secrets.OCI_REGION }}
           OCI_USER_ID: ${{ secrets.OCI_USER_ID }}
           OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY_ID }}
           OCI_KEY_FINGERPRINT: ${{ secrets.OCI_KEY_FINGERPRINT }}
           OCI_PRIVATE_KEY_FILENAME: ${{ secrets.OCI_PRIVATE_KEY }}
+          
+          # Дублюємо для сумісності (деякі версії скрипта шукають саме ці назви)
+          OCI_TENANCY: ${{ secrets.OCI_TENANCY_ID }}
+          OCI_USER: ${{ secrets.OCI_USER_ID }}
+          
+          # Налаштування інстансу
           OCI_AVAILABILITY_DOMAIN: ${{ secrets.OCI_AVAILABILITY_DOMAIN }}
           OCI_SUBNET_ID: ${{ secrets.OCI_SUBNET_ID }}
           OCI_IMAGE_ID: ${{ secrets.OCI_IMAGE_ID }}
@@ -47,3 +47,7 @@ jobs:
           OCI_SHAPE: ${{ secrets.OCI_SHAPE }}
           OCI_MAX_INSTANCES: ${{ secrets.OCI_MAX_INSTANCES }}
           OCI_SSH_PUBLIC_KEY: ${{ secrets.OCI_SSH_PUBLIC_KEY }}
+          
+          # Повідомлення
+          TELEGRAM_USER_ID: ${{ secrets.TELEGRAM_USER_ID }}
+          TELEGRAM_BOT_API_KEY: ${{ secrets.TELEGRAM_BOT_API_KEY }}
