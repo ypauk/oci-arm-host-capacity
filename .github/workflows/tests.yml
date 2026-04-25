@@ -54,4 +54,6 @@ jobs:
 
           # --- ТУТ ДОДАЄМО TELEGRAM ---
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_BOT_API_KEY: ${{ secrets.TELEGRAM_TOKEN }}  # Одне і те саме значення
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_USER_ID: ${{ secrets.TELEGRAM_CHAT_ID }}    # Також дублюємо
